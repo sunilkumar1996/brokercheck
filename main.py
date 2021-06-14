@@ -72,7 +72,7 @@ def data_scrap(link):
             try:
                 firm=soup.find('div',{'class':'bold ng-binding'}) 
                 firm_list.append(firm.text)
-                print(firm.text,"firm name sssssssssssssssssssssss")
+                print(firm.text,"firm name")
             except:
                 firm_list.append("Not found")
                     
