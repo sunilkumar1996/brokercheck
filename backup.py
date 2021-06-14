@@ -33,10 +33,8 @@ state_list = []
 zip_list = []
 street_list = []
 location_list = []
-link_list=[]
-search_keyword = [ "Merrill Lynch", "UBS", "Morgan Stanley"]
-# search_keyword = ["UBS"]
-# "Merrill Lynch", "UBS", "Morgan Stanley", 
+search_keyword = [ "UBS", "Morgan Stanley"]
+# "Merrill Lynch", "UBS", 
 
 def data_scrap(link):
     """
@@ -72,7 +70,7 @@ def data_scrap(link):
             try:
                 firm=soup.find('div',{'class':'bold ng-binding'}) 
                 firm_list.append(firm.text)
-                print(firm.text,"firm name")
+                print(firm.text,"firm name sssssssssssssssssssssss")
             except:
                 firm_list.append("Not found")
                     
@@ -95,68 +93,39 @@ def data_scrap(link):
             except:
                 state_list.append("Not found")          
     except:
-            pass
-
+            pass          
+   
 for seaching in search_keyword:
+    # Open the chrome driver
     driver = webdriver.Chrome('/home/sunil/workspace/scraping/kelvin/chromedriver_linux64/chromedriver')
+    #Hit the url on the chrome driver
     driver.get("https://brokercheck.finra.org")
     driver.maximize_window()
+
+        # Search keyword
     WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,'/html/body/div[1]/div/header/div/div[3]/bc-search/div/md-tabs/md-tabs-content-wrapper/md-tab-content[1]/div/form/div/div[1]/input[1]'))).send_keys(seaching)
+    # Search Enter button click.
     driver.find_element_by_xpath('/html/body/div[1]/div/header/div/div[3]/bc-search/div/md-tabs/md-tabs-content-wrapper/md-tab-content[1]/div/form/div/div[1]/input[1]').send_keys(Keys.ENTER)
-    time.sleep(3)
-    res = driver.page_source
-    soup = BeautifulSoup(res, 'html.parser')
-    pages = soup.find_all('a', {'class': 'ng-binding'})
-    page = str(pages[2].text)
-    p = page.split(sep=" ", maxsplit=3)
-    page_number = int(p[2])
+    
+
+        # Html Parser with beautifulSoup.
     try:
-        for i in range(0, page_number):    
+        for i in range(0,):    
             time.sleep(4)
             res = driver.page_source
             soup = BeautifulSoup(res, 'html.parser')
             all_cards=soup.find_all('a',{'class':'md-accent md-raised md-padding md-button ng-scope md-ink-ripple'})
-            experince = soup.find_all('div', {'class': 'row experience layout-row flex-50 ng-scope'})
             link = "https://brokercheck.finra.org/"
-            temp_link = []
             for cards in all_cards:
                 link = "https://brokercheck.finra.org" + cards.get('href')
-                temp_link.append(link)
-
-            temp_exp = []
-            for i in experince:
-                x = str(i.text)
-                obj_split = x.split()
-                if "<" in obj_split[3]:
-                    last_exp = (obj_split[3].translate({ord('<'): None}))
-                else:
-                    last_exp = obj_split[3]
-                final_exp = int(last_exp)
-                temp_exp.append(final_exp)
-            
-            if temp_link is not None or temp_exp is not None:
-                for i in range(0, len(temp_link)):
-                    if temp_exp[i] <= 5:
-                        link_list.append(temp_link[i])
-                        print(temp_link[i])
-                    else:
-                        pass
-                temp_exp.clear()
-                temp_link.clear()
-            else:
-                pass
+                print(link)
                 
             try:
                 WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.XPATH,'/html/body/div[1]/div/div/div/div/div/section/div[3]/div/div[1]/div/div/div[2]/ul/li[4]'))).click()
             except:
                 pass
-        print(link_list)
-        for link in link_list:
-            data_scrap(link)          
     except:
         pass
-
-
 # This code is for data store in CSV.
 c1=pd.Series(data=name_list, name="Advisor Name")
 
